@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>A Little Surprise for Ignacio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Supabase (Razorpay is just a hosted link — no SDK) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<style>
+  :root {
+    --cream: #F5F0E6;
+    --cream-soft: #FAF6EE;
+    --cream-deep: #EEE6D5;
+    --ink: #1B2A3F;
+    --ink-soft: #3A4658;
+    --ink-mute: #6A7384;
+    --gold: #B8935A;
+    --gold-deep: #8F6D3C;
+    --gold-soft: #D9BE8A;
+    --wine: #6B1F2E;
+    --line: rgba(27, 42, 63, 0.12);
+    --line-gold: rgba(184, 147, 90, 0.35);
+    --shadow: 0 1px 2px rgba(27,42,63,0.04), 0 8px 24px -12px rgba(27,42,63,0.08);
+    --shadow-lift: 0 2px 4px rgba(27,42,63,0.05), 0 20px 40px -20px rgba(27,42,63,0.18);
+    --serif: 'Cormorant Garamond', 'Garamond', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(217, 190, 138, 0.18), transparent 70%),
+      var(--cream);
+    padding: 24px 20px 48px;
+  }
+
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    text-align: center;
+    padding: 32px 0 40px;
+    position: relative;
+  }
+
+  .emblem {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  h1.title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(36px, 8vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  h1.title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--wine);
+  }
+
+  .hero-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .intro {
+    max-width: 460px;
+    margin: 0 auto;
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+    letter-spacing: 0.005em;
+  }
+
+  .intro strong {
+    color: var(--ink);
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  /* ---------- CARD (section container) ---------- */
+  .card {
+    background: var(--cream-soft);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px 24px;
+    margin-top: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line-gold);
+  }
+  .section-head h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+  }
+  .section-num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold-deep);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .section-sub {
+    font-size: 14px;
+    color: var(--ink-mute);
+    margin-top: -12px;
+    margin-bottom: 20px;
+  }
+
+  /* ---------- GIFT OPTIONS ---------- */
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .option {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+  .option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .option-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: all 0.18s cubic-bezier(.2,.7,.3,1);
+    min-height: 104px;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .option-card:hover {
+    border-color: var(--gold-soft);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(184, 147, 90, 0.08);
+  }
+  .option input:focus-visible + .option-card {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .option input:checked + .option-card {
+    background: #FFFDF7;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold), var(--shadow);
+  }
+  .option.disabled .option-card {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: var(--cream-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: all 0.18s ease;
+  }
+  .option input:checked + .option-card .checkbox {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .checkbox svg {
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: all 0.18s cubic-bezier(.2,.7,.3,1);
+  }
+  .option input:checked + .option-card .checkbox svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .option-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .option-eyebrow {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--gold-deep);
+    margin-bottom: 3px;
+  }
+  .option-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .option-desc {
+    font-size: 13.5px;
+    color: var(--ink-mute);
+    line-height: 1.45;
+  }
+
+  /* ---------- COUNTER + VALIDATION ---------- */
+  .vote-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-mute);
+  }
+  .counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--cream-deep);
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .counter.full {
+    background: #F4E8D2;
+    color: var(--gold-deep);
+  }
+  .counter-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .validation {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(107, 31, 46, 0.06);
+    border-left: 2px solid var(--wine);
+    border-radius: 4px;
+    color: var(--wine);
+    font-size: 13.5px;
+    display: none;
+  }
+  .validation.visible { display: block; }
+
+  /* ---------- FORM FIELDS ---------- */
+  .field {
+    margin-top: 18px;
+  }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+  .field label .optional {
+    color: var(--ink-mute);
+    font-weight: 400;
+    font-style: italic;
+    margin-left: 6px;
+  }
+  .input, .textarea {
+    width: 100%;
+    padding: 13px 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink);
+    transition: all 0.18s ease;
+    resize: vertical;
+  }
+  .input:focus, .textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(184, 147, 90, 0.15);
+  }
+  .textarea {
+    min-height: 80px;
+    line-height: 1.5;
+    font-family: var(--sans);
+  }
+  .input::placeholder, .textarea::placeholder {
+    color: var(--ink-mute);
+    opacity: 0.7;
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px 24px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(.2,.7,.3,1);
+    min-height: 52px;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+    box-shadow: var(--shadow);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #0F1A2A;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lift);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  .btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .btn-contribute {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--gold);
+    box-shadow: 0 1px 2px rgba(184, 147, 90, 0.08);
+  }
+  .btn-contribute:hover {
+    background: #FFFDF7;
+    border-color: var(--gold-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px -12px rgba(184, 147, 90, 0.4);
+  }
+  .btn-contribute:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .submit-area { margin-top: 24px; }
+
+  .privacy-note {
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* ---------- SUCCESS STATE ---------- */
+  .success {
+    display: none;
+    text-align: center;
+    padding: 8px 0;
+  }
+  .success.visible { display: block; animation: fadeUp 0.6s cubic-bezier(.2,.7,.3,1); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .success-mark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--cream-deep);
+    border: 1px solid var(--line-gold);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--gold-deep);
+  }
+
+  .success h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .success-msg {
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 380px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+
+  .summary {
+    text-align: left;
+    background: var(--cream-deep);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 0 auto 24px;
+    max-width: 420px;
+  }
+
+  /* ---------- KPI / RESULTS CARD ---------- */
+  .kpi-card {
+    background: #fff;
+    border: 1px solid var(--line-gold);
+    border-radius: 14px;
+    padding: 22px 22px 18px;
+    margin: 0 auto 24px;
+    max-width: 460px;
+    text-align: left;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.6s cubic-bezier(.2,.7,.3,1) 0.15s both;
+  }
+  .kpi-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .kpi-eyebrow {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-deep);
+    margin-bottom: 2px;
+  }
+  .kpi-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .kpi-stat {
+    text-align: right;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .kpi-stat-num {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 36px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .kpi-stat-label {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    margin-top: 2px;
+  }
+  .kpi-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .kpi-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 4px 12px;
+    align-items: baseline;
+  }
+  .kpi-row-label {
+    font-family: var(--serif);
+    font-size: 15.5px;
+    color: var(--ink);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .kpi-row-label em {
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--gold-deep);
+    font-weight: 400;
+    margin-right: 6px;
+  }
+  .kpi-row-value {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .kpi-row-value strong {
+    color: var(--ink);
+    font-weight: 500;
+    font-size: 16px;
+    margin-right: 4px;
+  }
+  .kpi-bar {
+    grid-column: 1 / -1;
+    position: relative;
+    height: 6px;
+    background: var(--cream-deep);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .kpi-bar-fill {
+    position: absolute;
+    inset: 0;
+    width: 0;
+    background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+    border-radius: 999px;
+    transition: width 1.1s cubic-bezier(.25,.8,.25,1);
+  }
+  .kpi-row.is-yours .kpi-bar-fill {
+    background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+  }
+  .kpi-row.is-yours .kpi-row-label::after {
+    content: 'your pick';
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    background: var(--cream-deep);
+    color: var(--gold-deep);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 11px;
+    font-weight: 400;
+    border-radius: 999px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+  .kpi-footnote {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    text-align: center;
+  }
+  .summary-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin-bottom: 12px;
+  }
+  .summary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--ink);
+    border-bottom: 1px dashed var(--line);
+  }
+  .summary-item:last-child { border-bottom: none; }
+  .summary-item::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .summary-suggestion {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+
+  /* ---------- CONTRIBUTION ---------- */
+  .contribute-card {
+    background: linear-gradient(180deg, var(--cream-soft) 0%, #FFFDF7 100%);
+    border: 1px solid var(--line-gold);
+    border-radius: 14px;
+    padding: 28px 24px;
+    margin-top: 20px;
+    text-align: center;
+  }
+  .contribute-badge {
+    display: inline-block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-deep);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .contribute-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .contribute-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+    line-height: 1.55;
+  }
+  .contribute-notes {
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    line-height: 1.6;
+  }
+  .contribute-notes .note-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold-deep);
+    font-weight: 500;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .footer {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .keep-secret {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: var(--cream-deep);
+    border-radius: 999px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .keep-secret svg { color: var(--gold-deep); flex-shrink: 0; }
+
+  .footer-line {
+    font-size: 12px;
+    color: var(--ink-mute);
+    letter-spacing: 0.03em;
+    line-height: 1.6;
+  }
+  .footer-line + .footer-line { margin-top: 4px; }
+
+  /* ---------- CONFETTI MOTIF ---------- */
+  .confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .confetti span {
+    position: absolute;
+    opacity: 0.25;
+  }
+  .confetti span:nth-child(1) { top: 8%; left: 6%; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; }
+  .confetti span:nth-child(2) { top: 14%; right: 10%; width: 6px; height: 1px; background: var(--gold-deep); transform: rotate(40deg); }
+  .confetti span:nth-child(3) { top: 26%; left: 4%; width: 1px; height: 8px; background: var(--gold); }
+  .confetti span:nth-child(4) { top: 40%; right: 6%; width: 3px; height: 3px; background: var(--wine); border-radius: 50%; opacity: 0.2; }
+  .confetti span:nth-child(5) { bottom: 20%; left: 8%; width: 6px; height: 1px; background: var(--gold-deep); transform: rotate(-20deg); }
+  .confetti span:nth-child(6) { bottom: 30%; right: 8%; width: 4px; height: 4px; background: var(--gold-soft); border-radius: 50%; }
+  .confetti span:nth-child(7) { bottom: 10%; left: 16%; width: 1px; height: 6px; background: var(--gold); transform: rotate(30deg); }
+
+  .page { position: relative; z-index: 1; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (min-width: 640px) {
+    body { padding: 48px 32px; }
+    .card { padding: 36px 36px; }
+    .hero { padding: 40px 0 56px; }
+    .options { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* keyboard-only focus clean-up */
+  :focus:not(:focus-visible) { outline: none; }
+
+  /* subtle underline for external-link affordance */
+  .ext-icon { opacity: 0.7; }
+
+</style>
+</head>
+<body>
+
+<div class="confetti" aria-hidden="true">
+  <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<main class="page" data-screen-label="Gift Poll">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="emblem" aria-hidden="true">
+      <!-- 50 monogram emblem -->
+      <svg viewBox="0 0 96 96" width="96" height="96">
+        <defs>
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#D9BE8A"/>
+            <stop offset="50%" stop-color="#B8935A"/>
+            <stop offset="100%" stop-color="#8F6D3C"/>
+          </linearGradient>
+        </defs>
+        <!-- outer thin ring -->
+        <circle cx="48" cy="48" r="44" fill="none" stroke="url(#goldGrad)" stroke-width="0.75" opacity="0.6"/>
+        <circle cx="48" cy="48" r="40" fill="none" stroke="url(#goldGrad)" stroke-width="1.25"/>
+        <!-- monogram: ISG initials -->
+        <text x="48" y="57"
+              text-anchor="middle"
+              font-family="Cormorant Garamond, Garamond, serif"
+              font-style="italic"
+              font-weight="500"
+              font-size="24"
+              fill="url(#goldGrad)"
+              letter-spacing="0.5">ISG</text>
+        <!-- delicate ornaments flanking the monogram -->
+        <path d="M22 48 h-6" stroke="#B8935A" stroke-width="0.75" opacity="0.6"/>
+        <path d="M74 48 h6"  stroke="#B8935A" stroke-width="0.75" opacity="0.6"/>
+        <circle cx="8" cy="48" r="1.2" fill="#B8935A"/>
+        <circle cx="88" cy="48" r="1.2" fill="#B8935A"/>
+      </svg>
+    </div>
+
+    <div class="eyebrow">A Milestone Celebration</div>
+
+    <h1 class="title">A little surprise<br>for <em>Ignacio</em></h1>
+    <div class="hero-sub">a new decade begins</div>
+
+    <p class="intro">
+      Ignacio is stepping into a new decade, and we'd like to mark it with something thoughtful. Please vote for up to two options, and feel free to suggest another idea. <strong>Let's keep this discreet</strong> so we can surprise him on <strong>30 May</strong>.
+    </p>
+  </header>
+
+  <!-- ============ VOTING FORM ============ -->
+  <form id="voteForm" novalidate>
+
+    <!-- Gift options -->
+    <section class="card" aria-labelledby="vote-heading">
+      <div class="section-head">
+        <h2 id="vote-heading">Choose your favourites</h2>
+        <span class="section-num">i.</span>
+      </div>
+      <p class="section-sub">Select up to two — whichever feel most Ignacio.</p>
+
+      <div class="options" role="group" aria-label="Gift ideas">
+        <!-- populated by JS -->
+      </div>
+
+      <div class="vote-meta" aria-live="polite">
+        <span id="counter" class="counter">
+          <span class="counter-dot"></span>
+          <span id="counterText">0 of 2 selected</span>
+        </span>
+        <span style="font-family: var(--serif); font-style: italic; color: var(--ink-mute);">or suggest your own below</span>
+      </div>
+
+      <div id="validation" class="validation" role="alert">
+        You may choose up to two favourites. Please deselect one before adding another.
+      </div>
+
+      <!-- Suggestion -->
+      <div class="field">
+        <label for="suggestion">
+          Suggest another gift idea
+          <span class="optional">optional</span>
+        </label>
+        <textarea id="suggestion" class="textarea" placeholder="A thought we haven't considered…" maxlength="300"></textarea>
+      </div>
+
+      <!-- Name -->
+      <div class="field">
+        <label for="name">
+          Your name
+          <span class="optional">optional</span>
+        </label>
+        <input type="text" id="name" class="input" placeholder="So we know who to thank" maxlength="80">
+      </div>
+    </section>
+
+    <!-- Submit -->
+    <div class="submit-area">
+      <button type="submit" class="btn btn-primary" id="submitBtn">
+        <span id="submitLabel">Submit my vote</span>
+        <svg id="submitSpinner" style="display:none" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-opacity="0.3"/>
+          <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+      </button>
+      <p class="privacy-note">
+        Your response is only used to organise the gift. We don't collect anything else.
+      </p>
+    </div>
+  </form>
+
+  <!-- ============ SUCCESS STATE ============ -->
+  <section class="card success" id="successCard" aria-live="polite">
+    <div class="success-mark" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>Thank you — your vote is in.</h2>
+    <p class="success-msg">
+      Thank you for helping us make Ignacio's celebration even more special. We'll keep you posted as the plan comes together.
+    </p>
+
+    <div class="summary" id="summary">
+      <div class="summary-label">You voted for</div>
+      <div id="summaryItems"></div>
+      <div class="summary-suggestion" id="summarySuggestion" style="display:none"></div>
+    </div>
+
+    <!-- ============ LIVE KPI RESULTS ============ -->
+    <div class="kpi-card" id="kpiCard">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-eyebrow">— Results so far —</div>
+          <div class="kpi-title">How the team is voting</div>
+        </div>
+        <div class="kpi-stat">
+          <span class="kpi-stat-num" id="kpiCount">—</span>
+          <span class="kpi-stat-label">voters</span>
+        </div>
+      </div>
+      <div class="kpi-bars" id="kpiBars">
+        <!-- populated by JS -->
+      </div>
+      <div class="kpi-footnote" id="kpiFootnote">
+        Live tally · updates as votes come in
+      </div>
+    </div>
+    <!-- ============ / KPI ============ -->
+
+    <!-- Contribution -->
+    <div class="contribute-card">
+      <div class="contribute-badge">— Optional —</div>
+      <div class="contribute-title">Contribute towards the gift</div>
+      <p class="contribute-desc">
+        If you'd like to chip in, you can contribute any amount securely below. No pressure — every gesture counts.
+      </p>
+
+      <a id="contributeBtn"
+         class="btn btn-contribute"
+         href="#"
+         target="_blank"
+         rel="noopener noreferrer">
+        Contribute securely
+        <svg class="ext-icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <div class="contribute-notes">
+        <p><span class="note-tag">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z" stroke="currentColor" stroke-width="2"/></svg>
+          Payments are handled securely via Razorpay.
+        </span></p>
+        <p style="margin-top:8px;">If possible, please add your name in the payment note so contributions are easier to track.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="keep-secret">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M12 15v2m0-9a3 3 0 013 3v2H9v-2a3 3 0 013-3zM6 11h12v9H6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Please keep this a surprise until 30 May.
+    </div>
+    <p class="footer-line">Private page for invited contributors only.</p>
+    <p class="footer-line" style="color: var(--gold-deep); font-family: var(--serif); font-style: italic; margin-top: 10px;">— con cariño —</p>
+  </footer>
+
+</main>
+
+<script>
+  // ============================================================
+  //  CONFIG — EDIT HERE
+  // ============================================================
+  //
+  //  1) CONTRIBUTION_URL
+  //     Paste your Razorpay hosted payment link below.
+  //
+  //  2) GIFT_OPTIONS
+  //     Edit, add, remove or reorder gift ideas here.
+  //     Each entry needs:
+  //        id    — a short unique slug (used in the database)
+  //        title — the headline shown on the card
+  //        desc  — one short supporting line
+  //     Keep it to 4 options for a clean 2×2 grid on desktop.
+  // ============================================================
+
+  // Razorpay hosted payment link — replace with yours
+  const CONTRIBUTION_URL = "https://rzp.io/your-razorpay-link-here";
+
+  // ---- Supabase (loaded via CDN in the page head) ------------
+  // Set these in config.js (not committed) or via env injection.
+  const SUPABASE_URL  = window.SUPABASE_URL  || "";
+  const SUPABASE_ANON = window.SUPABASE_ANON || "";
+
+  let sb = null;
+  if (SUPABASE_URL && SUPABASE_ANON && window.supabase) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  }
+
+  // Called by the form; returns {totalVoters, counts}
+  window.supabaseVote = async function(payload) {
+    if (!sb) return null;
+    await sb.from('votes').insert(payload);
+    const { data, count } = await sb.from('votes').select('selected_options', { count: 'exact' });
+    const counts = {};
+    (data || []).forEach(row => (row.selected_options || []).forEach(id => {
+      counts[id] = (counts[id] || 0) + 1;
+    }));
+    return { totalVoters: count || 0, counts };
+  };
+
+  const GIFT_OPTIONS = [
+    {
+      id: 'escape',
+      eyebrow: 'Escape',
+      title: 'Luxury stay gift card',
+      desc: 'Taj weekend or dining credit.'
+    },
+    {
+      id: 'signature',
+      eyebrow: 'Signature',
+      title: 'Personalised travel set',
+      desc: 'Leather passport wallet and tags.'
+    },
+    {
+      id: 'momentum',
+      eyebrow: 'Momentum',
+      title: 'Premium padel bundle',
+      desc: 'Shoes, bag, balls, accessories.'
+    },
+    {
+      id: 'wander',
+      eyebrow: 'Wander',
+      title: 'Curated experience voucher',
+      desc: 'India travel or activity gift.'
+    },
+  ];
+
+  const MAX_SELECTIONS = 2;
+
+  // ============================================================
+  //  RENDER OPTIONS
+  // ============================================================
+  const optionsEl = document.querySelector('.options');
+  GIFT_OPTIONS.forEach((opt, i) => {
+    const label = document.createElement('label');
+    label.className = 'option';
+    label.innerHTML = `
+      <input type="checkbox" name="gift" value="${opt.id}" data-title="${opt.title}" />
+      <div class="option-card">
+        <span class="checkbox" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="option-content">
+          <div class="option-eyebrow">${opt.eyebrow}</div>
+          <div class="option-title">${opt.title}</div>
+          <div class="option-desc">${opt.desc}</div>
+        </div>
+      </div>
+    `;
+    optionsEl.appendChild(label);
+  });
+
+  // ============================================================
+  //  SELECTION LOGIC
+  // ============================================================
+  const checkboxes = () => document.querySelectorAll('input[name="gift"]');
+  const counterEl = document.getElementById('counter');
+  const counterText = document.getElementById('counterText');
+  const validationEl = document.getElementById('validation');
+
+  function updateCounter() {
+    const checked = [...checkboxes()].filter(cb => cb.checked);
+    const n = checked.length;
+    counterText.textContent = `${n} of ${MAX_SELECTIONS} selected`;
+    counterEl.classList.toggle('full', n === MAX_SELECTIONS);
+
+    // disable unchecked when at cap
+    checkboxes().forEach(cb => {
+      const parent = cb.closest('.option');
+      if (!cb.checked && n >= MAX_SELECTIONS) {
+        parent.classList.add('disabled');
+        cb.disabled = true;
+      } else {
+        parent.classList.remove('disabled');
+        cb.disabled = false;
+      }
+    });
+
+    if (n <= MAX_SELECTIONS) validationEl.classList.remove('visible');
+  }
+
+  document.querySelector('.options').addEventListener('change', updateCounter);
+
+  // ============================================================
+  //  SUBMIT
+  // ============================================================
+  const form = document.getElementById('voteForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const submitLabel = document.getElementById('submitLabel');
+  const submitSpinner = document.getElementById('submitSpinner');
+  const successCard = document.getElementById('successCard');
+  const summaryItems = document.getElementById('summaryItems');
+  const summarySuggestion = document.getElementById('summarySuggestion');
+  const contributeBtn = document.getElementById('contributeBtn');
+
+  contributeBtn.href = CONTRIBUTION_URL;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const selected = [...checkboxes()].filter(cb => cb.checked);
+    const suggestion = document.getElementById('suggestion').value.trim();
+    const name = document.getElementById('name').value.trim();
+
+    if (selected.length === 0 && !suggestion) {
+      validationEl.textContent = 'Please pick at least one favourite or suggest your own idea.';
+      validationEl.classList.add('visible');
+      return;
+    }
+    if (selected.length > MAX_SELECTIONS) {
+      validationEl.textContent = `You may choose up to ${MAX_SELECTIONS} favourites.`;
+      validationEl.classList.add('visible');
+      return;
+    }
+
+    // loading state
+    submitBtn.disabled = true;
+    submitLabel.textContent = 'Sending…';
+    submitSpinner.style.display = 'inline-block';
+
+    // --- HOOK: Supabase insert would go here ---
+    // await supabase.from('votes').insert({
+    //   selected_options: selected.map(s => s.value),
+    //   suggested_idea: suggestion || null,
+    //   contributor_name: name || null,
+    // });
+    let tallies = null;
+    if (window.supabaseVote) {
+      try {
+        tallies = await window.supabaseVote({
+          selected_options: selected.map(s => s.value),
+          suggested_idea: suggestion || null,
+          contributor_name: name || null,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (!tallies) {
+      // demo fallback — fake numbers so the KPI still renders in preview
+      await new Promise(r => setTimeout(r, 500));
+      const seed = Math.floor(Math.random() * 5) + 8;
+      tallies = {
+        totalVoters: seed + 1,
+        counts: Object.fromEntries(GIFT_OPTIONS.map((o, i) => [
+          o.id, Math.max(0, Math.round(seed * [0.55, 0.38, 0.22, 0.14][i] || 0.2))
+        ])),
+      };
+      // add the current vote
+      selected.forEach(cb => { tallies.counts[cb.value] = (tallies.counts[cb.value] || 0) + 1; });
+    }
+
+    // populate summary
+    summaryItems.innerHTML = '';
+    selected.forEach(cb => {
+      const div = document.createElement('div');
+      div.className = 'summary-item';
+      div.textContent = cb.dataset.title;
+      summaryItems.appendChild(div);
+    });
+    if (selected.length === 0) {
+      const div = document.createElement('div');
+      div.className = 'summary-item';
+      div.style.fontStyle = 'italic';
+      div.style.color = 'var(--ink-mute)';
+      div.textContent = 'Your own suggestion';
+      summaryItems.appendChild(div);
+    }
+    if (suggestion) {
+      summarySuggestion.style.display = 'block';
+      summarySuggestion.textContent = `"${suggestion}"`;
+    }
+
+    // transition
+    form.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+    form.style.opacity = '0';
+    form.style.transform = 'translateY(-6px)';
+    setTimeout(() => {
+      form.style.display = 'none';
+      successCard.classList.add('visible');
+      renderKPI(tallies, selected.map(s => s.value));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 350);
+  });
+
+  // ============================================================
+  //  KPI RESULTS RENDER
+  // ============================================================
+  function renderKPI(tallies, yourVotes) {
+    const total = tallies.totalVoters || 0;
+    const counts = tallies.counts || {};
+    const max = Math.max(1, ...GIFT_OPTIONS.map(o => counts[o.id] || 0));
+
+    document.getElementById('kpiCount').textContent = total;
+    const bars = document.getElementById('kpiBars');
+    bars.innerHTML = '';
+
+    const sorted = [...GIFT_OPTIONS].sort((a, b) => (counts[b.id] || 0) - (counts[a.id] || 0));
+
+    sorted.forEach((opt) => {
+      const n = counts[opt.id] || 0;
+      const pct = total ? Math.round((n / total) * 100) : 0;
+      const widthPct = max ? (n / max) * 100 : 0;
+      const isYours = yourVotes.includes(opt.id);
+
+      const row = document.createElement('div');
+      row.className = 'kpi-row' + (isYours ? ' is-yours' : '');
+      row.innerHTML = `
+        <div class="kpi-row-label"><em>${opt.eyebrow}</em>${opt.title}</div>
+        <div class="kpi-row-value"><strong>${n}</strong>· ${pct}%</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+      `;
+      bars.appendChild(row);
+      // animate in
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          row.querySelector('.kpi-bar-fill').style.width = widthPct + '%';
+        }, 200);
+      });
+    });
+  }
+
+  updateCounter();
+
+  // ============================================================
+  //  TWEAKS PANEL
+  // ============================================================
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "headingFont": "Cormorant Garamond",
+    "bodyFont": "Inter",
+    "accent": "gold",
+    "baseFontSize": 16,
+    "cornerRadius": 14
+  }/*EDITMODE-END*/;
+
+  const FONT_OPTIONS = {
+    heading: [
+      { name: 'Cormorant Garamond', stack: "'Cormorant Garamond', Garamond, serif" },
+      { name: 'Playfair Display',   stack: "'Playfair Display', Georgia, serif" },
+      { name: 'EB Garamond',        stack: "'EB Garamond', Garamond, serif" },
+      { name: 'Fraunces',           stack: "'Fraunces', Georgia, serif" },
+      { name: 'Libre Caslon Text',  stack: "'Libre Caslon Text', Georgia, serif" },
+    ],
+    body: [
+      { name: 'Inter',         stack: "'Inter', -apple-system, sans-serif" },
+      { name: 'Work Sans',     stack: "'Work Sans', -apple-system, sans-serif" },
+      { name: 'Nunito Sans',   stack: "'Nunito Sans', -apple-system, sans-serif" },
+      { name: 'IBM Plex Sans', stack: "'IBM Plex Sans', -apple-system, sans-serif" },
+    ],
+  };
+
+  const ACCENTS = {
+    gold:    { '--gold': '#B8935A', '--gold-deep': '#8F6D3C', '--gold-soft': '#D9BE8A', '--line-gold': 'rgba(184,147,90,0.35)' },
+    burgundy:{ '--gold': '#8C3A4A', '--gold-deep': '#6B1F2E', '--gold-soft': '#C58894', '--line-gold': 'rgba(140,58,74,0.3)' },
+    emerald: { '--gold': '#5A7D5F', '--gold-deep': '#3F5A44', '--gold-soft': '#9FB8A3', '--line-gold': 'rgba(90,125,95,0.3)' },
+    ink:     { '--gold': '#3A4658', '--gold-deep': '#1B2A3F', '--gold-soft': '#8A94A3', '--line-gold': 'rgba(27,42,63,0.25)' },
+  };
+
+  function loadGoogleFont(name) {
+    const id = 'gf-' + name.replace(/\s+/g, '-');
+    if (document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(name)}:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap`;
+    document.head.appendChild(link);
+  }
+
+  const tweaks = { ...TWEAK_DEFAULTS };
+
+  function applyTweaks() {
+    const headFont = FONT_OPTIONS.heading.find(f => f.name === tweaks.headingFont) || FONT_OPTIONS.heading[0];
+    const bodyFont = FONT_OPTIONS.body.find(f => f.name === tweaks.bodyFont) || FONT_OPTIONS.body[0];
+    loadGoogleFont(headFont.name);
+    loadGoogleFont(bodyFont.name);
+    document.documentElement.style.setProperty('--serif', headFont.stack);
+    document.documentElement.style.setProperty('--sans', bodyFont.stack);
+    document.body.style.fontSize = tweaks.baseFontSize + 'px';
+
+    const accent = ACCENTS[tweaks.accent] || ACCENTS.gold;
+    Object.entries(accent).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+  }
+  applyTweaks();
+
+  // ---- panel UI ----
+  const tweakPanel = document.createElement('div');
+  tweakPanel.id = 'tweakPanel';
+  tweakPanel.style.cssText = `
+    position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    width: 280px; max-width: calc(100vw - 32px);
+    background: #fff; border: 1px solid rgba(27,42,63,0.12);
+    border-radius: 12px; padding: 16px 16px 14px;
+    box-shadow: 0 12px 40px -12px rgba(27,42,63,0.25);
+    font-family: -apple-system, 'Inter', sans-serif;
+    font-size: 12.5px; color: #1B2A3F;
+    display: none; max-height: 80vh; overflow-y: auto;
+  `;
+  tweakPanel.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(27,42,63,0.08);">
+      <strong style="font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:#8F6D3C;">Tweaks</strong>
+      <button id="tweakClose" style="background:none;border:none;cursor:pointer;color:#6A7384;font-size:18px;line-height:1;padding:0 4px;">&times;</button>
+    </div>
+    <label style="display:block;margin-bottom:10px;">
+      <span style="display:block;margin-bottom:4px;color:#6A7384;font-weight:500;">Heading font</span>
+      <select id="tw-head" style="width:100%;padding:6px 8px;border:1px solid rgba(27,42,63,0.15);border-radius:6px;background:#fff;font:inherit;">
+        ${FONT_OPTIONS.heading.map(f => `<option value="${f.name}">${f.name}</option>`).join('')}
+      </select>
+    </label>
+    <label style="display:block;margin-bottom:10px;">
+      <span style="display:block;margin-bottom:4px;color:#6A7384;font-weight:500;">Body font</span>
+      <select id="tw-body" style="width:100%;padding:6px 8px;border:1px solid rgba(27,42,63,0.15);border-radius:6px;background:#fff;font:inherit;">
+        ${FONT_OPTIONS.body.map(f => `<option value="${f.name}">${f.name}</option>`).join('')}
+      </select>
+    </label>
+    <div style="margin-bottom:10px;">
+      <span style="display:block;margin-bottom:6px;color:#6A7384;font-weight:500;">Accent</span>
+      <div id="tw-accents" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+        ${Object.entries(ACCENTS).map(([k,v]) => `
+          <button data-accent="${k}" title="${k}" style="height:28px;border-radius:6px;border:1.5px solid rgba(27,42,63,0.1);background:${v['--gold']};cursor:pointer;"></button>
+        `).join('')}
+      </div>
+    </div>
+    <label style="display:block;margin-bottom:10px;">
+      <span style="display:flex;justify-content:space-between;margin-bottom:4px;color:#6A7384;font-weight:500;">
+        <span>Base text size</span><span id="tw-size-val" style="font-variant-numeric:tabular-nums;">16px</span>
+      </span>
+      <input type="range" id="tw-size" min="14" max="19" step="0.5" style="width:100%;">
+    </label>
+    <label style="display:block;">
+      <span style="display:flex;justify-content:space-between;margin-bottom:4px;color:#6A7384;font-weight:500;">
+        <span>Corner radius</span><span id="tw-radius-val" style="font-variant-numeric:tabular-nums;">14px</span>
+      </span>
+      <input type="range" id="tw-radius" min="2" max="22" step="1" style="width:100%;">
+    </label>
+  `;
+  document.body.appendChild(tweakPanel);
+
+  function bindTweaks() {
+    const headSel = tweakPanel.querySelector('#tw-head');
+    const bodySel = tweakPanel.querySelector('#tw-body');
+    const sizeInp = tweakPanel.querySelector('#tw-size');
+    const sizeVal = tweakPanel.querySelector('#tw-size-val');
+    const radInp  = tweakPanel.querySelector('#tw-radius');
+    const radVal  = tweakPanel.querySelector('#tw-radius-val');
+
+    headSel.value = tweaks.headingFont;
+    bodySel.value = tweaks.bodyFont;
+    sizeInp.value = tweaks.baseFontSize;
+    sizeVal.textContent = tweaks.baseFontSize + 'px';
+    radInp.value  = tweaks.cornerRadius;
+    radVal.textContent = tweaks.cornerRadius + 'px';
+
+    function syncAccents() {
+      tweakPanel.querySelectorAll('[data-accent]').forEach(b => {
+        b.style.boxShadow = b.dataset.accent === tweaks.accent ? '0 0 0 2px #1B2A3F' : 'none';
+      });
+    }
+    syncAccents();
+
+    function commit(patch) {
+      Object.assign(tweaks, patch);
+      applyTweaks();
+      document.querySelectorAll('.card, .contribute-card').forEach(el => {
+        el.style.borderRadius = tweaks.cornerRadius + 'px';
+      });
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: patch }, '*');
+    }
+
+    headSel.addEventListener('change', e => commit({ headingFont: e.target.value }));
+    bodySel.addEventListener('change', e => commit({ bodyFont: e.target.value }));
+    sizeInp.addEventListener('input', e => { sizeVal.textContent = e.target.value + 'px'; commit({ baseFontSize: parseFloat(e.target.value) }); });
+    radInp.addEventListener('input',  e => { radVal.textContent  = e.target.value + 'px'; commit({ cornerRadius: parseFloat(e.target.value) }); });
+    tweakPanel.querySelectorAll('[data-accent]').forEach(btn => {
+      btn.addEventListener('click', () => { commit({ accent: btn.dataset.accent }); syncAccents(); });
+    });
+    tweakPanel.querySelector('#tweakClose').addEventListener('click', () => {
+      tweakPanel.style.display = 'none';
+      window.parent.postMessage({ type: '__deactivate_edit_mode_ack' }, '*');
+    });
+  }
+  bindTweaks();
+
+  // apply corner radius on load
+  document.querySelectorAll('.card, .contribute-card').forEach(el => {
+    el.style.borderRadius = tweaks.cornerRadius + 'px';
+  });
+
+  // ---- host protocol ----
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === '__activate_edit_mode')   tweakPanel.style.display = 'block';
+    if (d.type === '__deactivate_edit_mode') tweakPanel.style.display = 'none';
+  });
+  window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+</script>
+
+</body>
+</html>

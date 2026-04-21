@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · Ignacio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<style>
+  :root {
+    --cream: #F5F0E6;
+    --cream-soft: #FAF6EE;
+    --cream-deep: #EEE6D5;
+    --ink: #1B2A3F;
+    --ink-soft: #3A4658;
+    --ink-mute: #6A7384;
+    --gold: #B8935A;
+    --gold-deep: #8F6D3C;
+    --gold-soft: #D9BE8A;
+    --line: rgba(27,42,63,0.12);
+    --line-gold: rgba(184,147,90,0.35);
+    --serif: 'Cormorant Garamond', Garamond, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --shadow: 0 1px 2px rgba(27,42,63,0.04), 0 8px 24px -12px rgba(27,42,63,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(217,190,138,0.18), transparent 70%), var(--cream);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    min-height: 100vh;
+    padding: 32px 20px 64px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; }
+
+  /* header */
+  .head { text-align: center; padding: 16px 0 32px; }
+  .head-eyebrow {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold-deep);
+    margin-bottom: 8px;
+  }
+  .head h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(28px, 5vw, 40px);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .head h1 em { font-style: italic; color: var(--gold-deep); font-weight: 400; }
+
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--serif); font-style: italic; font-size: 14px;
+    color: var(--ink-mute); text-decoration: none;
+    margin-bottom: 24px;
+  }
+  .back:hover { color: var(--gold-deep); }
+
+  /* cards */
+  .card {
+    background: var(--cream-soft);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line-gold);
+  }
+
+  /* PIN gate */
+  .gate { max-width: 380px; margin: 40px auto; text-align: center; }
+  .gate .lock {
+    width: 48px; height: 48px; margin: 0 auto 18px;
+    border-radius: 50%; background: var(--cream-deep); color: var(--gold-deep);
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line-gold);
+  }
+  .gate p {
+    font-family: var(--serif); font-size: 18px; color: var(--ink-soft);
+    margin-bottom: 18px; font-style: italic;
+  }
+  .gate input {
+    width: 100%; padding: 14px 16px; text-align: center;
+    font-family: var(--serif); font-size: 20px; letter-spacing: 0.2em;
+    border: 1px solid var(--line); border-radius: 10px;
+    background: #fff; color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .gate input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(184,147,90,0.15); }
+  .gate button {
+    width: 100%; padding: 14px; background: var(--ink); color: var(--cream);
+    border: none; border-radius: 10px; font-family: var(--sans);
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .gate button:hover { background: #0F1A2A; transform: translateY(-1px); }
+  .gate .err { color: #6B1F2E; font-size: 13px; margin-top: 10px; font-style: italic; min-height: 18px; }
+
+  /* KPI tiles */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .tile {
+    background: #fff;
+    border: 1px solid var(--line-gold);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .tile-label {
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--ink-mute); margin-bottom: 6px;
+  }
+  .tile-num {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 36px; line-height: 1; letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums; color: var(--ink);
+  }
+  .tile-sub {
+    font-family: var(--serif); font-size: 13px;
+    color: var(--ink-mute); margin-top: 6px;
+  }
+
+  /* ranked bars */
+  .rank-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 4px 14px;
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .rank-row:last-child { border-bottom: none; }
+  .rank-num {
+    grid-row: 1 / 3;
+    align-self: center;
+    font-family: var(--serif); font-style: italic;
+    font-size: 18px; color: var(--gold-deep);
+    text-align: right;
+  }
+  .rank-label {
+    font-family: var(--serif); font-size: 16px;
+    font-weight: 500; color: var(--ink);
+  }
+  .rank-label em {
+    font-style: italic; font-size: 12.5px; font-weight: 400;
+    color: var(--gold-deep); margin-right: 8px;
+  }
+  .rank-val {
+    font-family: var(--serif); font-size: 15px;
+    color: var(--ink-soft); font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .rank-val strong { color: var(--ink); font-weight: 500; margin-right: 4px; }
+  .rank-bar {
+    grid-column: 2 / 4;
+    height: 6px; background: var(--cream-deep);
+    border-radius: 999px; overflow: hidden;
+  }
+  .rank-bar-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+    border-radius: 999px;
+    transition: width 1s cubic-bezier(.25,.8,.25,1);
+  }
+  .rank-row.top .rank-bar-fill { background: linear-gradient(90deg, var(--gold), var(--gold-deep)); }
+
+  /* suggestions */
+  .sugg {
+    background: #fff; border: 1px solid var(--line);
+    border-left: 2px solid var(--gold);
+    padding: 14px 16px; border-radius: 6px;
+    margin-bottom: 10px;
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .sugg-meta {
+    display: block; margin-top: 8px;
+    font-size: 12px; font-style: italic; color: var(--ink-mute);
+  }
+
+  .empty {
+    font-family: var(--serif); font-style: italic;
+    color: var(--ink-mute); text-align: center; padding: 24px;
+  }
+
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+  }
+  .refresh {
+    background: #fff; color: var(--ink);
+    border: 1px solid var(--gold);
+    padding: 8px 14px; border-radius: 8px; cursor: pointer;
+    font: 500 13px var(--sans); display: inline-flex; gap: 6px; align-items: center;
+  }
+  .refresh:hover { background: #FFFDF7; }
+  .stamp { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-mute); }
+
+  .warn {
+    padding: 12px 14px; background: rgba(107,31,46,0.06);
+    border-left: 2px solid #6B1F2E; border-radius: 4px;
+    color: #6B1F2E; font-size: 13.5px;
+  }
+</style>
+</head>
+<body>
+
+<main class="wrap">
+
+  <!-- PIN GATE -->
+  <div id="gate" class="gate">
+    <div class="lock" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 15v2m-5-6h10v9H7v-9zm2 0V9a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <p>Private admin — enter your PIN</p>
+    <input id="pin" type="password" inputmode="numeric" placeholder="••••" autofocus aria-label="Admin PIN" />
+    <button id="unlock">Unlock</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" style="display:none">
+
+    <a class="back" href="./index.html">← back to the poll</a>
+
+    <header class="head">
+      <div class="head-eyebrow">Admin · private</div>
+      <h1>Vote results <em>for Ignacio</em></h1>
+    </header>
+
+    <div class="toolbar">
+      <span class="stamp" id="stamp">loading…</span>
+      <button class="refresh" id="refresh">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 11-3-6.7M21 4v5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Refresh
+      </button>
+    </div>
+
+    <div id="warn"></div>
+
+    <!-- Top KPIs -->
+    <section class="card">
+      <div class="tiles">
+        <div class="tile"><div class="tile-label">Total voters</div><div class="tile-num" id="totalVoters">—</div></div>
+        <div class="tile"><div class="tile-label">Total votes cast</div><div class="tile-num" id="totalVotes">—</div></div>
+        <div class="tile"><div class="tile-label">Leading option</div><div class="tile-num" style="font-size:22px;line-height:1.15" id="leader">—</div><div class="tile-sub" id="leaderSub"></div></div>
+        <div class="tile"><div class="tile-label">Suggestions</div><div class="tile-num" id="totalSugg">—</div></div>
+      </div>
+    </section>
+
+    <!-- Ranked results -->
+    <section class="card">
+      <h2>Results by option</h2>
+      <div id="ranked"></div>
+    </section>
+
+    <!-- Suggestions -->
+    <section class="card">
+      <h2>Suggested ideas</h2>
+      <div id="suggestions"></div>
+    </section>
+
+    <!-- Contributors -->
+    <section class="card">
+      <h2>Who voted</h2>
+      <div id="contributors"></div>
+    </section>
+  </div>
+
+</main>
+
+<script>
+  const GIFT_OPTIONS = [
+    { id: 'escape',    eyebrow: 'Escape',    title: 'Luxury stay gift card' },
+    { id: 'signature', eyebrow: 'Signature', title: 'Personalised travel set' },
+    { id: 'momentum',  eyebrow: 'Momentum',  title: 'Premium padel bundle' },
+    { id: 'wander',    eyebrow: 'Wander',    title: 'Curated experience voucher' },
+  ];
+
+  // ---- PIN gate (session-scoped) ----
+  const PIN = window.ADMIN_PIN || 'change-me-1234';
+  const gate = document.getElementById('gate');
+  const dash = document.getElementById('dash');
+  const pinInput = document.getElementById('pin');
+  const gateErr = document.getElementById('gateErr');
+
+  function unlock() {
+    if (pinInput.value === PIN) {
+      sessionStorage.setItem('ignacio_admin', '1');
+      gate.style.display = 'none';
+      dash.style.display = 'block';
+      loadData();
+    } else {
+      gateErr.textContent = 'Incorrect PIN.';
+      pinInput.value = '';
+      pinInput.focus();
+    }
+  }
+  document.getElementById('unlock').addEventListener('click', unlock);
+  pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+
+  if (sessionStorage.getItem('ignacio_admin') === '1') {
+    gate.style.display = 'none';
+    dash.style.display = 'block';
+    // defer to let supabase script load
+    window.addEventListener('load', loadData);
+  }
+
+  // ---- Data ----
+  async function loadData() {
+    const stamp = document.getElementById('stamp');
+    const warn  = document.getElementById('warn');
+    stamp.textContent = 'loading…';
+    warn.innerHTML = '';
+
+    const url  = window.SUPABASE_URL;
+    const anon = window.SUPABASE_ANON;
+
+    if (!url || !anon || url.includes('YOUR-PROJECT') || !window.supabase) {
+      warn.innerHTML = '<div class="warn">Supabase isn\'t configured yet — showing demo data. Edit <code>config.js</code> with your project URL + anon key.</div>';
+      return render(demoData());
+    }
+
+    const sb = window.supabase.createClient(url, anon);
+    const { data, error } = await sb.from('votes').select('*').order('created_at', { ascending: false });
+    if (error) {
+      warn.innerHTML = '<div class="warn">Error loading votes: ' + error.message + '</div>';
+      stamp.textContent = '';
+      return;
+    }
+    render(data || []);
+  }
+
+  function demoData() {
+    return [
+      { selected_options: ['escape','signature'], suggested_idea: null, contributor_name: 'Priya', created_at: new Date().toISOString() },
+      { selected_options: ['escape'],            suggested_idea: 'A handwritten letter from each of us, bound',           contributor_name: 'Marc',     created_at: new Date().toISOString() },
+      { selected_options: ['momentum','escape'], suggested_idea: null, contributor_name: 'Aditi',    created_at: new Date().toISOString() },
+      { selected_options: ['wander'],            suggested_idea: null, contributor_name: null,       created_at: new Date().toISOString() },
+      { selected_options: ['signature','wander'],suggested_idea: 'A Moleskine with his initials',   contributor_name: 'Jean', created_at: new Date().toISOString() },
+    ];
+  }
+
+  function render(rows) {
+    const total = rows.length;
+    const counts = {};
+    GIFT_OPTIONS.forEach(o => counts[o.id] = 0);
+    let totalVotes = 0;
+    rows.forEach(r => (r.selected_options || []).forEach(id => {
+      counts[id] = (counts[id] || 0) + 1;
+      totalVotes++;
+    }));
+
+    const ranked = [...GIFT_OPTIONS].sort((a,b) => counts[b.id] - counts[a.id]);
+    const leader = ranked[0];
+
+    document.getElementById('totalVoters').textContent = total;
+    document.getElementById('totalVotes').textContent  = totalVotes;
+    document.getElementById('leader').textContent      = total ? leader.title : '—';
+    document.getElementById('leaderSub').textContent   = total
+      ? `${counts[leader.id]} vote${counts[leader.id]===1?'':'s'} · ${Math.round(counts[leader.id]/total*100)}% of voters`
+      : '';
+    document.getElementById('totalSugg').textContent   = rows.filter(r => r.suggested_idea).length;
+
+    // Ranked bars
+    const max = Math.max(1, ...Object.values(counts));
+    const rankedEl = document.getElementById('ranked');
+    rankedEl.innerHTML = '';
+    ranked.forEach((opt, i) => {
+      const n   = counts[opt.id];
+      const pct = total ? Math.round(n/total*100) : 0;
+      const w   = max ? (n/max)*100 : 0;
+      const row = document.createElement('div');
+      row.className = 'rank-row' + (i === 0 && n > 0 ? ' top' : '');
+      row.innerHTML = `
+        <div class="rank-num">${i+1}</div>
+        <div class="rank-label"><em>${opt.eyebrow}</em>${opt.title}</div>
+        <div class="rank-val"><strong>${n}</strong>· ${pct}%</div>
+        <div class="rank-bar"><div class="rank-bar-fill" style="width:0%"></div></div>
+      `;
+      rankedEl.appendChild(row);
+      requestAnimationFrame(() => setTimeout(() => {
+        row.querySelector('.rank-bar-fill').style.width = w + '%';
+      }, 150 + i*80));
+    });
+
+    // Suggestions
+    const sEl = document.getElementById('suggestions');
+    const suggs = rows.filter(r => r.suggested_idea);
+    sEl.innerHTML = suggs.length
+      ? suggs.map(r => `
+          <div class="sugg">
+            "${escapeHtml(r.suggested_idea)}"
+            <span class="sugg-meta">— ${escapeHtml(r.contributor_name || 'anonymous')} · ${formatDate(r.created_at)}</span>
+          </div>`).join('')
+      : '<div class="empty">No suggestions yet.</div>';
+
+    // Contributors
+    const cEl = document.getElementById('contributors');
+    cEl.innerHTML = rows.length
+      ? rows.map(r => `
+          <div class="sugg" style="border-left-color:var(--gold-soft);font-size:14.5px;">
+            <strong style="font-weight:500;color:var(--ink);">${escapeHtml(r.contributor_name || 'anonymous')}</strong>
+            <span style="color:var(--ink-mute);font-style:italic;"> · voted for ${(r.selected_options || []).map(id => {
+              const o = GIFT_OPTIONS.find(g => g.id === id);
+              return o ? o.eyebrow : id;
+            }).join(' + ') || '—'}</span>
+            <span class="sugg-meta">${formatDate(r.created_at)}</span>
+          </div>`).join('')
+      : '<div class="empty">No votes yet.</div>';
+
+    document.getElementById('stamp').textContent = `Updated ${new Date().toLocaleTimeString()}`;
+  }
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function formatDate(s) {
+    try { return new Date(s).toLocaleString(); } catch (e) { return ''; }
+  }
+
+  document.getElementById('refresh').addEventListener('click', loadData);
+</script>
+
+</body>
+</html>
