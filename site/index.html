@@ -425,6 +425,76 @@
     outline-offset: 3px;
   }
 
+  /* ---------- UPI block ---------- */
+  .upi-block {
+    background: #fff;
+    border: 1px solid var(--line-gold);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    margin: 4px auto 4px;
+    max-width: 360px;
+    text-align: center;
+  }
+  .upi-qr {
+    display: block;
+    width: 200px;
+    height: 200px;
+    max-width: 100%;
+    margin: 0 auto 14px;
+    border-radius: 8px;
+    background: #fff;
+    object-fit: contain;
+  }
+  .upi-row {
+    margin-bottom: 14px;
+  }
+  .upi-label {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--gold-deep);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .upi-id-wrap {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0;
+    background: var(--cream-deep);
+    border: 1px solid var(--line-gold);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .upi-id {
+    font-family: 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 9px 12px;
+    background: transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+  }
+  .upi-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 12px;
+    background: #fff;
+    border: none;
+    border-left: 1px solid var(--line-gold);
+    color: var(--gold-deep);
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .upi-copy:hover { background: #FFFDF7; }
+  .upi-copy.copied { color: var(--ink); }
+
   .submit-area { margin-top: 24px; }
 
   .privacy-note {
@@ -922,31 +992,47 @@
     </div>
     <!-- ============ / KPI ============ -->
 
-    <!-- Contribution -->
+    <!-- Contribution — UPI / QR (no backend) -->
     <div class="contribute-card">
       <div class="contribute-badge">— Optional —</div>
       <div class="contribute-title">Contribute towards the gift</div>
       <p class="contribute-desc">
-        If you'd like to chip in, you can contribute any amount securely below. No pressure — every gesture counts.
+        If you'd like to chip in, scan the QR with any UPI app (GPay, PhonePe, Paytm…) or copy the UPI ID below. No pressure — every gesture counts.
       </p>
 
-      <a id="contributeBtn"
-         class="btn btn-contribute"
-         href="#"
-         target="_blank"
-         rel="noopener noreferrer">
-        Contribute securely
-        <svg class="ext-icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
+      <div class="upi-block">
+        <img src="./upi-qr.png" alt="UPI QR code for Oussama Bouhadida" class="upi-qr" />
+
+        <div class="upi-row">
+          <div class="upi-label">UPI ID</div>
+          <div class="upi-id-wrap">
+            <code id="upiId" class="upi-id">oussama.bouhadida@oksbi</code>
+            <button type="button" id="copyUpi" class="upi-copy" aria-label="Copy UPI ID">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.75"/>
+                <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.75"/>
+              </svg>
+              <span id="copyUpiLabel">Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <a id="payUpiBtn"
+           class="btn btn-contribute"
+           href="#">
+          Pay with UPI app
+          <svg class="ext-icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
 
       <div class="contribute-notes">
         <p><span class="note-tag">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z" stroke="currentColor" stroke-width="2"/></svg>
-          Payments are handled securely via Razorpay.
+          Paid to Oussama — pooled for the gift.
         </span></p>
-        <p style="margin-top:8px;">If possible, please add your name in the payment note so contributions are easier to track.</p>
+        <p style="margin-top:8px;">Please add your name in the UPI note so contributions are easier to track.</p>
       </div>
     </div>
   </section>
@@ -985,6 +1071,10 @@
   // Razorpay hosted payment link — replace with yours
   const CONTRIBUTION_URL = "https://rzp.io/your-razorpay-link-here";
 
+  const UPI_ID = "oussama.bouhadida@oksbi";
+  const UPI_PAYEE_NAME = "Oussama Bouhadida";
+  const UPI_NOTE = "Ignacio collective gift";
+
   // ---- Supabase (loaded via CDN in the page head) ------------
   // Set these in config.js (not committed) or via env injection.
   const SUPABASE_URL  = window.SUPABASE_URL  || "";
@@ -1011,26 +1101,26 @@
     {
       id: 'escape',
       eyebrow: 'Escape',
-      title: 'Luxury stay gift card',
-      desc: 'Taj weekend or dining credit.'
-    },
-    {
-      id: 'signature',
-      eyebrow: 'Signature',
-      title: 'Personalised travel set',
-      desc: 'Leather passport wallet and tags.'
+      title: 'A Taj Experience to Remember',
+      desc: 'A refined stay, dining or spa escape — the freedom to enjoy a memorable Taj moment in India.'
     },
     {
       id: 'momentum',
       eyebrow: 'Momentum',
-      title: 'Premium padel bundle',
-      desc: 'Shoes, bag, balls, accessories.'
+      title: 'A Thoughtful Padel Upgrade',
+      desc: 'Premium gear for the game he loves — a curated set of padel essentials, chosen with real care.'
     },
     {
-      id: 'wander',
-      eyebrow: 'Wander',
-      title: 'Curated experience voucher',
-      desc: 'India travel or activity gift.'
+      id: 'signature',
+      eyebrow: 'Signature',
+      title: 'A Personal Travel Companion',
+      desc: 'Elegant leather pieces for every journey — a refined personalised travel set, meaningful and useful.'
+    },
+    {
+      id: 'experience',
+      eyebrow: 'Experience',
+      title: 'A Gift of Choice and Discovery',
+      desc: 'A flexible experience voucher — a moment, place or activity he can pick in his own time.'
     },
   ];
 
@@ -1100,9 +1190,35 @@
   const successCard = document.getElementById('successCard');
   const summaryItems = document.getElementById('summaryItems');
   const summarySuggestion = document.getElementById('summarySuggestion');
-  const contributeBtn = document.getElementById('contributeBtn');
 
-  contributeBtn.href = CONTRIBUTION_URL;
+  // ============================================================
+  //  UPI CONTRIBUTION
+  // ============================================================
+  const payUpiBtn = document.getElementById('payUpiBtn');
+  const copyUpiBtn = document.getElementById('copyUpi');
+  const copyUpiLabel = document.getElementById('copyUpiLabel');
+
+  // upi:// deep link — opens GPay/PhonePe/Paytm/etc on mobile
+  const upiHref = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&cu=INR&tn=${encodeURIComponent(UPI_NOTE)}`;
+  payUpiBtn.href = upiHref;
+
+  copyUpiBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(UPI_ID);
+      copyUpiBtn.classList.add('copied');
+      copyUpiLabel.textContent = 'Copied';
+      setTimeout(() => {
+        copyUpiBtn.classList.remove('copied');
+        copyUpiLabel.textContent = 'Copy';
+      }, 1800);
+    } catch (err) {
+      // fallback
+      const range = document.createRange();
+      range.selectNode(document.getElementById('upiId'));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+    }
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
